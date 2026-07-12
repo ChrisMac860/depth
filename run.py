@@ -9,10 +9,12 @@ product, see SPEC.md "Notes for builders").
 
 from __future__ import annotations
 
+import os
+
 from server.app import app
 
-HOST = "127.0.0.1"
-PORT = 8000
+HOST = os.environ.get("HOST", "127.0.0.1")
+PORT = int(os.environ.get("PORT", "8000"))
 
 
 def main() -> None:
