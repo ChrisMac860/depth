@@ -1,0 +1,44 @@
+[
+  {
+    "id": "small",
+    "name": "Restaurant tips",
+    "size_label": "small",
+    "n": 176,
+    "m": 68,
+    "description": "Tip amounts left by restaurant parties, split by meal service (Dinner vs Lunch), from the classic Seaborn 'tips' dataset.",
+    "provenance": "Real data: seaborn-data/tips.csv (https://raw.githubusercontent.com/mwaskom/seaborn-data/master/tips.csv). Variable: tip (USD). Split on `time`: control = Dinner rows, treatment = Lunch rows. No filtering beyond dropping non-numeric/blank tip values (none were dropped in practice; the source file is clean).",
+    "unit": "USD",
+    "control_label": "Dinner",
+    "treatment_label": "Lunch",
+    "suggested_title": "Tip amount: Dinner vs Lunch",
+    "default_method": "ks_band"
+  },
+  {
+    "id": "medium",
+    "name": "NYC taxi fares",
+    "size_label": "medium",
+    "n": 4577,
+    "m": 1812,
+    "description": "NYC taxi ride fares, split by payment method (credit card vs cash), from the Seaborn 'taxis' dataset.",
+    "provenance": "Real data: seaborn-data/taxis.csv (https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv). Variable: fare (USD), not tip. Cash tips in this dataset are never electronically recorded and are always 0.00, which would make a tip comparison degenerate rather than a genuine shape difference, so fare was used instead. Split on `payment`: control = 'credit card' rows, treatment = 'cash' rows. Dropped 44 rows with null/other payment value out of 6433 total. Zero fares were not present; none dropped for that reason.",
+    "unit": "USD",
+    "control_label": "Credit card",
+    "treatment_label": "Cash",
+    "suggested_title": "Taxi fare: Credit card vs Cash",
+    "default_method": "ks_band"
+  },
+  {
+    "id": "large",
+    "name": "Diamond prices",
+    "size_label": "large",
+    "n": 21551,
+    "m": 13791,
+    "description": "Diamond sale prices, split by cut quality (Ideal vs Premium), from the classic Seaborn 'diamonds' dataset.",
+    "provenance": "Real data: seaborn-data/diamonds.csv (https://raw.githubusercontent.com/mwaskom/seaborn-data/master/diamonds.csv). Variable: price (USD). Split on `cut`: control = Ideal rows, treatment = Premium rows. No filtering beyond dropping non-numeric/blank price values (none were dropped in practice; the source file is clean).",
+    "unit": "USD",
+    "control_label": "Ideal",
+    "treatment_label": "Premium",
+    "suggested_title": "Diamond price: Ideal vs Premium cut",
+    "default_method": "ks_band"
+  }
+]

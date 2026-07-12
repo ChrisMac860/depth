@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en" data-theme="paper">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEPTH: see what the mean is hiding</title>
+<link rel="stylesheet" href="/static/styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%236C4CF1'/%3E%3Cpath d='M6 24 L14 8 L18 18 L26 6' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="grid-texture" aria-hidden="true"></div>
+
+<div id="backend-banner" class="backend-banner" hidden role="alert">
+  <span class="backend-banner__dot"></span>
+  <span class="backend-banner__text">Backend not reachable: start it with <code>python run.py</code> from the <code>depth/</code> folder, then reload this page.</span>
+  <button id="backend-banner-retry" class="backend-banner__retry" type="button">Retry</button>
+</div>
+
+<div class="ticker" role="status" aria-live="off">
+  <div class="ticker__track" id="ticker-track">
+    <span class="ticker__seg">DEPTH · LOCAL SHIFT-FUNCTION ANALYSIS</span>
+    <span class="ticker__seg" id="ticker-status">BACKEND · CHECKING…</span>
+    <span class="ticker__seg" id="ticker-method">METHOD · n/a</span>
+    <span class="ticker__seg" id="ticker-alpha">α · n/a</span>
+    <span class="ticker__seg" id="ticker-dataset">DATASET · none loaded</span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="site-header__mark">
+    <h1 class="wordmark">DEPTH<span class="wordmark__dot">.</span></h1>
+    <p class="tagline">See what the mean is hiding.</p>
+  </div>
+  <div class="site-header__controls">
+    <button id="help-toggle" class="help-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="help-panel">
+      Help
+    </button>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
+      <span class="theme-toggle__track">
+        <span class="theme-toggle__thumb"></span>
+      </span>
+      <span class="theme-toggle__label" id="theme-toggle-label">Paper</span>
+    </button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ENTRY COLUMN -->
+  <section class="entry-panel" aria-label="Data entry">
+
+    <div class="panel-block">
+      <h2 class="panel-block__title">01 · Choose a dataset</h2>
+      <div id="example-cards" class="example-cards" aria-live="polite">
+        <div class="example-card example-card--skeleton" aria-hidden="true"></div>
+        <div class="example-card example-card--skeleton" aria-hidden="true"></div>
+        <div class="example-card example-card--skeleton" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="panel-block">
+      <h2 class="panel-block__title">02 · or bring your own</h2>
+      <div class="custom-data">
+        <textarea id="csv-paste" class="csv-paste" rows="4"
+          placeholder="Paste two numeric columns (control, treatment) or two newline-separated groups…"></textarea>
+        <div class="custom-data__row">
+          <label class="file-btn" for="csv-file">
+            <input type="file" id="csv-file" accept=".csv,.txt" hidden>
+            Upload CSV
+          </label>
+          <button id="csv-use" class="btn btn--secondary" type="button">Use pasted data</button>
+        </div>
+        <p id="csv-error" class="inline-error" hidden></p>
+      </div>
+    </div>
+
+    <div class="panel-block">
+      <h2 class="panel-block__title">03 · Method</h2>
+      <div class="method-toggle" role="radiogroup" aria-label="Analysis method">
+        <button class="pill-toggle__option is-active" type="button" data-method="ks_band" role="radio" aria-checked="true">KS band</button>
+        <button class="pill-toggle__option" type="button" data-method="bootstrap" role="radio" aria-checked="false">Bootstrap</button>
+      </div>
+      <div class="alpha-row">
+        <label for="alpha-input">α (significance)</label>
+        <input id="alpha-input" class="alpha-input" type="number" min="0.001" max="0.5" step="0.01" value="0.05" inputmode="decimal">
+      </div>
+    </div>
+
+    <button id="run-analysis" class="btn btn--primary btn--block" type="button" disabled>
+      Run analysis
+    </button>
+    <p id="run-error" class="inline-error" hidden></p>
+
+  </section>
+
+  <!-- RESULTS PANEL -->
+  <section class="results-panel" aria-label="Results">
+
+    <div id="results-empty" class="results-empty">
+      <p class="results-empty__eyebrow">No result yet</p>
+      <p class="results-empty__body">Select a dataset on the left, or paste in two groups of your own data, then run the analysis. The shift function will appear here.</p>
+    </div>
+
+    <div id="results-content" class="results-content" hidden>
+
+      <div class="chart-card">
+        <div id="chart-container" class="chart-container"></div>
+      </div>
+      <p class="chart-hint">Click any chart title or axis label to edit it.</p>
+
+      <div class="stat-tile--verdict">
+        <span class="verdict-eyebrow">Verdict</span>
+        <span id="verdict-chip" class="verdict-chip">n/a</span>
+      </div>
+
+      <div class="results-meta">
+        <span class="results-meta__item">
+          <span class="results-meta__label">n (control)</span>
+          <span class="stat-tile__value" data-stat="n">n/a</span>
+        </span>
+        <span class="results-meta__sep">·</span>
+        <span class="results-meta__item">
+          <span class="results-meta__label">m (treatment)</span>
+          <span class="stat-tile__value" data-stat="m">n/a</span>
+        </span>
+      </div>
+
+      <div class="stat-tiles" id="stat-tiles">
+        <div class="stat-tile">
+          <span class="stat-tile__label">mean diff</span>
+          <span class="stat-tile__value" data-stat="mean_diff">n/a</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-tile__label">median shift</span>
+          <span class="stat-tile__value" data-stat="median_shift">n/a</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-tile__label">welch p</span>
+          <span class="stat-tile__value" data-stat="welch_p">n/a</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-tile__label">KS p</span>
+          <span class="stat-tile__value" data-stat="ks_p">n/a</span>
+        </div>
+      </div>
+
+      <div class="callout" id="callout">
+        <p class="callout__eyebrow">What the mean hides</p>
+        <p class="callout__body" id="callout-body">n/a</p>
+      </div>
+
+      <div class="provenance" id="provenance"></div>
+
+      <button id="download-report" class="btn btn--primary" type="button" disabled>
+        Download report
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>
+    Design synthesizes three 2026 references:
+    <strong>Greptile</strong> (paper canvas, monospace stats, angular buttons),
+    <strong>lapa.ninja</strong> (dark “Depth” theme, pill controls),
+    and the <strong>2026 editorial trend</strong> (blocky display type, asymmetric layout).
+    It runs entirely offline once loaded; no external requests occur at runtime.
+  </p>
+</footer>
+
+<div id="help-backdrop" class="help-backdrop" hidden aria-hidden="true"></div>
+
+<aside id="help-panel" class="help-panel" role="dialog" aria-modal="true" aria-labelledby="help-panel-title" tabindex="-1" hidden>
+  <div class="help-panel__header">
+    <h2 id="help-panel-title" class="help-panel__title">Help</h2>
+    <button id="help-close" class="help-close" type="button">Close</button>
+  </div>
+
+  <div class="help-panel__body">
+
+    <section class="help-section">
+      <h3>What DEPTH does</h3>
+      <p>DEPTH compares two groups of numbers, a control group and a treatment group, across their entire distribution, rather than at the average alone. Instead of collapsing each group to a single mean and running a t-test, it estimates how the gap between the groups changes at every point in the range, from the smallest values to the largest.</p>
+    </section>
+
+    <section class="help-section">
+      <h3>Reading the chart</h3>
+      <dl class="help-dl">
+        <dt>X-axis</dt>
+        <dd>Control quantile, from 0 (the smallest control value) to 1 (the largest).</dd>
+        <dt>Top axis</dt>
+        <dd>A secondary axis along the top shows the approximate control value at that quantile, so you can read the x-axis in the original units as well as in quantile terms.</dd>
+        <dt>Line</dt>
+        <dd>The line is the estimated shift, Δ (treatment minus control), at each quantile.</dd>
+        <dt>Shaded band</dt>
+        <dd>A simultaneous 95% (1−α) confidence band. The band is valid across the whole curve at once, not only point by point, so the entire shape shown holds at that confidence level.</dd>
+        <dt>Dashed line</dt>
+        <dd>Zero: no difference between the groups.</dd>
+        <dt>Warm/red regions</dt>
+        <dd>Quantile ranges where the band excludes zero: these are the statistically significant ranges.</dd>
+        <dt>Missing band edge</dt>
+        <dd>Where a band edge is missing at the extremes (near quantile 0 or 1), the band is unbounded there: this is a small-sample-tail effect, not a data error.</dd>
+      </dl>
+    </section>
+
+    <section class="help-section">
+      <h3>The two methods</h3>
+      <dl class="help-dl">
+        <dt>KS band (default)</dt>
+        <dd>Exact and distribution-free: it inverts the two-sample Kolmogorov–Smirnov acceptance region (Doksum &amp; Sievers, 1976) and is fast to compute.</dd>
+        <dt>Bootstrap</dt>
+        <dd>A quantile-domain sup-t band built by resampling both groups (2000 draws by default), evaluated on a 5%–95% quantile grid. It is slower than the KS band, but useful as a cross-check.</dd>
+      </dl>
+    </section>
+
+    <section class="help-section">
+      <h3>α (significance)</h3>
+      <p>α sets the confidence level of the band: the band shown gives simultaneous 1−α coverage. A sensible range is 0.01–0.10; the default is 0.05 (a 95% band). A smaller α widens the band and makes significance harder to find; a larger α narrows it.</p>
+    </section>
+
+    <section class="help-section">
+      <h3>The stats row</h3>
+      <dl class="help-dl">
+        <dt>n, m</dt>
+        <dd>Sample sizes of the control and treatment groups.</dd>
+        <dt>mean diff</dt>
+        <dd>The difference between the group averages, which is what a t-test evaluates.</dd>
+        <dt>median shift</dt>
+        <dd>Difference of the group medians.</dd>
+        <dt>welch p</dt>
+        <dd>The p-value from Welch's t-test, a mean-only test shown for contrast.</dd>
+        <dt>ks p</dt>
+        <dd>The p-value from the two-sample Kolmogorov–Smirnov test, which is sensitive to any difference in distribution, not only a shift in the mean.</dd>
+        <dt>verdict chip</dt>
+        <dd>Whether the confidence band excludes zero anywhere along the curve.</dd>
+      </dl>
+    </section>
+
+    <section class="help-section">
+      <h3>The three example datasets</h3>
+      <dl class="help-dl">
+        <dt>Restaurant tips (small)</dt>
+        <dd>Seaborn's <code>tips.csv</code>. Dinner vs Lunch tip amounts. n=176 (Dinner, control) / m=68 (Lunch, treatment).</dd>
+        <dt>NYC taxi fares (medium)</dt>
+        <dd>Seaborn's <code>taxis.csv</code>. Credit-card vs cash fares. Tips were not used, because cash tips are recorded as 0 in the source data; 44 rows with a null payment type were dropped.</dd>
+        <dt>Diamond prices (large)</dt>
+        <dd>Seaborn's <code>diamonds.csv</code>. Ideal vs Premium cut prices. n=21,551 (Ideal, control) / m=13,791 (Premium, treatment).</dd>
+      </dl>
+    </section>
+
+    <section class="help-section">
+      <h3>Bringing your own data</h3>
+      <p>Paste or upload data in one of two formats. Each group needs at least 10 values. Data goes to the local backend only; nothing leaves your machine.</p>
+      <dl class="help-dl">
+        <dt>Two columns</dt>
+        <dd>Two delimiter-separated numeric columns (comma, tab, or semicolon; a header row is tolerated). Column mode pairs values row by row, so rows missing either value are skipped. If your two groups have different sizes, use the two-block format instead.</dd>
+        <dt>Two blocks</dt>
+        <dd>Two blocks of numbers separated by a blank line. The two blocks may have different sizes.</dd>
+      </dl>
+    </section>
+
+    <section class="help-section">
+      <h3>Editing the chart</h3>
+      <p>Click the chart title, subtitle, or either axis label to edit it in place. Type the new text; Enter or clicking away commits the change, Escape cancels it. Edited text becomes the source of truth for that chart and carries through to the downloaded report.</p>
+    </section>
+
+    <section class="help-section">
+      <h3>Download report</h3>
+      <p>Produces one self-contained <code>.html</code> file: the chart with your edited labels, a stats table, the list of significant regions, the dataset's provenance, and a generated-on timestamp. It opens offline in any browser and is safe to email or archive; it makes no external requests.</p>
+    </section>
+
+    <section class="help-section">
+      <h3>Credits</h3>
+      <dl class="help-dl">
+        <dt>Method</dt>
+        <dd>Doksum &amp; Sievers (1976), “Plotting with Confidence.”</dd>
+        <dt>Engine</dt>
+        <dd>shiftab.</dd>
+        <dt>Design inspiration</dt>
+        <dd>Greptile, the lapa.ninja 2026 gallery, and 2026 editorial web trends.</dd>
+      </dl>
+    </section>
+
+  </div>
+</aside>
+
+<script src="/static/app.js" defer></script>
+</body>
+</html>
