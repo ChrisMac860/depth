@@ -1,40 +1,51 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>1978 earnings: NSW job-training participants vs control (DEPTH report)</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When the mean isn't as inclusive as it seems</title>
+<meta name="description" content="A randomised job-training experiment, a famous +$1,794 average, and the fifty-year-old method that shows who actually got it.">
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: #F7F5EF;
-    color: #15130F;
-    font-family: 'Inter','Helvetica Neue',Arial,sans-serif;
-    padding: 2.5rem 1.25rem 4rem;
-  }
-  .wrap { max-width: 760px; margin: 0 auto; }
-  .wordmark { font-weight: 900; font-size: 2.4rem; letter-spacing: -0.02em; margin: 0; }
-  .wordmark span { color: #6C4CF1; }
-  .tagline { color: #5B5648; margin: 0.3rem 0 2rem; }
-  h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: #5B5648; margin: 0 0 0.75rem; }
-  .chart-wrap { border: 1px solid rgba(21, 19, 15, 0.14); padding: 1rem; margin-bottom: 2rem; background: #FFFFFF; }
-  .chart-wrap svg { width: 100%; height: auto; display: block; }
-  table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.9rem; }
-  td, th { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(21, 19, 15, 0.14); text-align: left; }
-  th { color: #5B5648; font-weight: 600; width: 40%; }
-  .callout { background: #E7C9A9; border-left: 4px solid #F0603A; padding: 1rem 1.25rem; margin-bottom: 2rem; line-height: 1.55; }
-  .callout p:first-child { margin-top: 0; }
-  .regions { margin: 0 0 2rem; padding-left: 1.25rem; }
-  .regions li { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.85rem; margin-bottom: 0.25rem; }
-  .footer { color: #5B5648; font-size: 0.78rem; border-top: 1px solid rgba(21, 19, 15, 0.14); padding-top: 1rem; line-height: 1.6; }
-  @media print { body { padding: 0; } }
+  :root{ --paper:#F7F5EF; --ink:#15130F; --mute:#5B5648; --accent:#6C4CF1; --signal:#F0603A; --warm:#E7C9A9;
+         --mono:'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--paper); color:var(--ink);
+        font-family:'Inter','Helvetica Neue',Arial,sans-serif; line-height:1.6;
+        padding:3rem 1.25rem 5rem; }
+  .wrap{ max-width:720px; margin:0 auto; }
+  .kicker{ font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 14px; }
+  h1{ font-weight:900; font-size:clamp(30px,6vw,46px); letter-spacing:-.02em; line-height:1.05; margin:0 0 10px; }
+  .byline{ font-family:var(--mono); font-size:12.5px; color:var(--mute); margin:0 0 2.4rem; }
+  p{ margin:0 0 1.1rem; font-size:17px; }
+  h2{ font-weight:800; font-size:24px; letter-spacing:-.01em; margin:2.2rem 0 .7rem; }
+  ul{ margin:0 0 1.1rem; padding-left:1.2rem; }
+  li{ margin-bottom:.45rem; font-size:17px; }
+  strong{ font-weight:700; }
+  .figure{ border:1px solid rgba(21,19,15,.14); background:#FFFFFF; padding:1rem; margin:1.6rem 0; }
+  .figure svg{ width:100%; height:auto; display:block; }
+  .figcap{ font-family:var(--mono); font-size:12px; color:var(--mute); margin:.6rem 0 0; }
+  .figcap a{ color:var(--accent); }
+  a{ color:var(--accent); }
+  .num{ font-family:var(--mono); font-size:15.5px; }
+  .cta{ background:var(--warm); border-left:4px solid var(--signal); padding:1rem 1.25rem; margin:1.6rem 0; }
+  .cta p{ margin:0; }
+  .footer{ color:var(--mute); font-size:13px; border-top:1px solid rgba(21,19,15,.14); margin-top:3rem; padding-top:1rem; line-height:1.6; }
+  .footer a{ color:var(--mute); }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <p class="wordmark">DEPTH<span>.</span></p>
-  <p class="tagline">See what the mean is hiding.</p>
-  <div class="chart-wrap"><svg viewBox="0 0 920 520" xmlns="http://www.w3.org/2000/svg" font-family="'Inter','Helvetica Neue',Arial,sans-serif">
+
+  <p class="kicker">DEPTH · shift functions on a famous experiment</p>
+  <h1>When the mean isn't as inclusive as it seems.</h1>
+  <p class="byline">Chris Mackle · July 2026 · all numbers reproducible from public data (sources in the footer)</p>
+
+  <p>In the mid-1970s the United States ran a randomised experiment on a job-training programme; it went by the name of the National Supported Work Demonstration. Take the sample that made it famous (185 people through the programme, 260 controls), compare average earnings in 1978, and you get the result that launched a thousand citations: participants earned <span class="num">$1,794</span> more on average, with a p-value of <span class="num">0.008</span>. The programme worked. Approve it and ship it.</p>
+
+  <p>Now look at the same 445 people without averaging.</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 920 520" xmlns="http://www.w3.org/2000/svg" font-family="'Inter','Helvetica Neue',Arial,sans-serif">
 <style>
       .d-bg { fill: #FFFFFF; }
       .d-band { fill: #6C4CF1; fill-opacity: 0.16; }
@@ -115,22 +126,56 @@
       <text class="d-axis-label" x="16" y="286" text-anchor="middle" transform="rotate(-90 16 286)">Shift in earnings (USD)</text>
       <line class="depth-editable__underline" x1="0" y1="0" x2="0" y2="0"></line>
     </g>
-</svg></div>
-  <h2>Stats</h2>
-  <table>
-    <tr><th>n</th><td>260</td></tr><tr><th>m</th><td>185</td></tr><tr><th>method</th><td>ks_band</td></tr><tr><th>alpha</th><td>0.05</td></tr><tr><th>mean diff</th><td>+1794.3424</td></tr><tr><th>median shift</th><td>+1093.5135</td></tr><tr><th>welch p</th><td>0.008</td></tr><tr><th>ks p</th><td>0.041</td></tr><tr><th>verdict</th><td>Shift detected</td></tr>
-  </table>
-  <h2>Significant regions (control quantile)</h2>
-  <ul class="regions"><li>0.381 – 0.381 (control quantile)</li></ul>
-  <div class="callout">
-    <p><strong>What the mean hides</strong></p>
-    <p>At the 38% percentile of Control group, the NSW participants distribution is 1,509.78 USD higher. The overall mean (Δ=+1794.342 USD) obscures this, because it averages across the entire range.</p>
+</svg>
+    <p class="figcap">The full self-contained report this figure comes from is <a href="nsw-lalonde-report.html">here</a>; it opens offline and carries its own provenance.</p>
   </div>
+
+  <ul>
+    <li>At the 10th percentile, the difference is <span class="num">$0</span>. The people at the bottom of the distribution gained absolutely nothing whatsoever.</li>
+    <li>At the 25th percentile they gained <span class="num">$485</span>.</li>
+    <li>At the median: <span class="num">$1,094</span>.</li>
+    <li>At the 75th: <span class="num">$2,355</span>. At the 90th: <span class="num">$3,198</span>. At the 95th: roughly <span class="num">$3,900</span>.</li>
+    <li>The share of people earning nothing at all fell from 35% to 24%.</li>
+  </ul>
+
+  <p>The average of <span class="num">$1,794</span> is true, but it is misleading and does not give the full picture. The chart above is a <strong>shift function</strong>: at every quantile of the control distribution, it shows how much higher or lower the treatment distribution sits, with a confidence band around the whole curve. It comes from a 1976 paper by Doksum and Sievers ("Plotting with Confidence: Graphical Comparisons of Two Populations") that experimentation tooling simply never picked up. Every A/B dashboard I have seen just reports the difference in means and stops; perhaps, if you are lucky, the 95th percentile.</p>
+
+  <p>The detail that keeps it honest rather than a p-hacking machine is the word <strong>simultaneous</strong>. The band around the curve is valid across the whole curve at once: one confidence statement for every quantile together, not ninety-nine separate tests waiting to hand you a false positive. If you have ever been tempted to peek at "the effect in the top decile" after a flat result, this is the adult version of that instinct.</p>
+
+  <p>Applied here, the simultaneous band is also where the humility comes in. With 445 people, only one part of the curve clears the bar outright: around the 38th percentile, where the gap is <span class="num">$1,510</span>. The large gains at the top are real point estimates with wide uncertainty; the honest reading is "suggestive, not proven". A per-quantile dashboard would have handed you all of those numbers with no such warning.</p>
+
+  <h2>The twist: the famous number is fragile</h2>
+  <p>The <span class="num">$1,794</span> comes from the Dehejia and Wahba experimental subsample, the version of the data most papers use. The original full experimental sample (297 treated, 425 controls) tells a subtler, quieter story: the mean difference is <span class="num">$886</span> with p&nbsp;=&nbsp;<span class="num">0.07</span>, and the shift function finds no significant region anywhere. Same programme, same outcome variable, different sample: the single-number verdict flips from "worked" to "inconclusive". Distributions are not a luxury; they are the context that stops one number from lying to you, adding depth to your choices.</p>
+
+  <h2>Where this bites in product work</h2>
+  <p>Means hide tails, and tails are where the damage lives and slowly compounds: the slow checkout experiences, the sellers whose earnings fall while the average rises, the users a change quietly breaks. Any metric that is skewed (revenue, latency, delivery time, session length, payout) can move at the top while the bottom goes backwards, and a difference in means will happily net the two against each other. Guardrail and fairness questions are quantile questions.</p>
+
+  <h2>Scope</h2>
+  <p>Honestly: this method is for continuous metrics with a few hundred observations or more per group. It is not for binary conversion rates; a shift function on zeros and ones tells you nothing a proportion test does not.</p>
+
+  <h2>The tool</h2>
+  <p>I built the chart above with <a href="https://depth-p97z.onrender.com/">DEPTH</a>, a small free tool that computes shift functions with simultaneous bands. Run locally, your data never uploads; the chart labels are click-to-edit, and it exports self-contained reports like the figure in this post. Source and local install: <a href="https://github.com/ChrisMac860/depth">github.com/ChrisMac860/depth</a>.</p>
+
+  <div class="cta">
+    <p>If your team has one metric where you suspect the mean is hiding the story, I audit a single experiment or metric for a fixed fee. Get in touch: <a href="mailto:christophermackle01@gmail.com">christophermackle01@gmail.com</a>.</p>
+  </div>
+
   <p class="footer">
-    Source: National Supported Work Demonstration randomised experiment (LaLonde 1986; Dehejia and Wahba 1999 experimental sample). Outcome: re78, real annual earnings in 1978 (USD). 185 treated, 260 control. Source: Rdatasets, causaldata::nsw_mixtape (https://vincentarelbundock.github.io/Rdatasets/csv/causaldata/nsw_mixtape.csv).<br>
-    Generated on 2026-07-13 15:23:43 UTC by DEPTH (local shift-function analysis).<br>
-    This file is fully self-contained (inline styles, inline chart, no external requests) and opens offline in any browser.
+    Data: National Supported Work Demonstration (LaLonde 1986). Headline sample: Dehejia and Wahba 1999 experimental subsample via Rdatasets, causaldata::nsw_mixtape; full sample via Rdatasets, DAAG::nswdemo. Outcome: re78, real annual earnings in 1978 (USD). Method: Doksum and Sievers 1976. Analysis and figure: DEPTH (KS simultaneous band, &alpha; = 0.05).<br>
+    This page records a cookieless visit count (GoatCounter); it never includes anything about you beyond the visit itself.
   </p>
+
 </div>
+<script>
+  (function () {
+    if (location.hostname === 'chrismac860.github.io') {
+      var s = document.createElement('script');
+      s.async = true;
+      s.setAttribute('data-goatcounter', 'https://cmackle.goatcounter.com/count');
+      s.src = 'https://gc.zgo.at/count.js';
+      document.head.appendChild(s);
+    }
+  })();
+</script>
 </body>
 </html>

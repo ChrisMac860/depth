@@ -660,7 +660,15 @@
       <text class="d-tick-label" x="${marginLeft - 10}" y="${(yScale(v) + 4).toFixed(1)}" text-anchor="end">${fmtAxisNum(v)}</text>
     `).join('');
 
-    const sigRects = sigRegions.map((r) => `<rect class="d-sig" x="${xScale(r[0]).toFixed(1)}" y="${marginTop}" width="${Math.max(0, xScale(r[1]) - xScale(r[0])).toFixed(1)}" height="${plotH}"></rect>`).join('');
+    // A single-point significant region has zero geometric width; draw it as
+    // a thin 3-unit strip centred on the point so it stays visible.
+    const sigRects = sigRegions.map((r) => {
+      const x0 = xScale(r[0]);
+      const w = Math.max(0, xScale(r[1]) - x0);
+      const drawW = Math.max(w, 3);
+      const drawX = w < 3 ? x0 - (drawW - w) / 2 : x0;
+      return `<rect class="d-sig" x="${drawX.toFixed(1)}" y="${marginTop}" width="${drawW.toFixed(1)}" height="${plotH}"></rect>`;
+    }).join('');
 
     const xTicksMarkup = xTicks.map((t) => `
       <line class="d-axis-line" x1="${xScale(t).toFixed(1)}" y1="${bottomEdgeY}" x2="${xScale(t).toFixed(1)}" y2="${bottomEdgeY + 5}"></line>
