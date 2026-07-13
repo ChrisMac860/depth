@@ -502,9 +502,18 @@
     let regionStr = shown.map(fmtRegionPct).join(', ');
     if (regions.length > 3) regionStr += ` (and ${regions.length - 3} more)`;
     const direction = best ? (best.delta > 0 ? 'higher' : 'lower') : 'different';
-    const magnitude = best ? `${Math.abs(best.delta).toFixed(2)}${unit}` : 'a measurable amount';
+    const magNum = best ? Math.abs(best.delta).toLocaleString('en-GB',
+      { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : null;
+    const magnitude = magNum ? `${magNum}${unit}` : 'a measurable amount';
 
-    return `Between the ${regionStr} percentiles of ${cLabel}, ${tLabel} runs ${magnitude} ${direction} than ${cLabel}. The overall mean (Δ=${fmtSigned(result.mean_diff, 3)}${unit}) obscures this gap, because it averages across the entire range.`;
+    // "the <label> distribution" keeps the sentence grammatical whatever
+    // the label's number; a single merged point gets "at", ranges "between".
+    const single = regions.length === 1 &&
+      Math.round(regions[0][0] * 100) === Math.round(regions[0][1] * 100);
+    if (single) {
+      return `At the ${regionStr} percentile of ${cLabel}, the ${tLabel} distribution is ${magnitude} ${direction}. The overall mean (Δ=${fmtSigned(result.mean_diff, 3)}${unit}) obscures this, because it averages across the entire range.`;
+    }
+    return `Between the ${regionStr} percentiles of ${cLabel}, the ${tLabel} distribution runs as much as ${magnitude} ${direction}. The overall mean (Δ=${fmtSigned(result.mean_diff, 3)}${unit}) obscures this pattern, because it averages across the entire range.`;
   }
 
   function renderProvenance() {
