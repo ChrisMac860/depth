@@ -210,13 +210,26 @@ def _bootstrap_band(
         control, q, method="linear"
     )
 
-    idx_x = rng.integers(0, n, size=(n_boot, n))
-    idx_y = rng.integers(0, m, size=(n_boot, m))
-    xb = control[idx_x]  # (n_boot, n)
-    yb = treatment[idx_y]  # (n_boot, m)
-
-    qx = np.quantile(xb, q, axis=1, method="linear")  # (len(q), n_boot)
-    qy = np.quantile(yb, q, axis=1, method="linear")  # (len(q), n_boot)
+    # Resample in chunks so peak memory is bounded by (chunk x n), not
+    # (n_boot x n): the monolithic version peaked at ~1.6 GB on a 21k-row
+    # sample and OOM-killed 512 MB deployments. Consecutive rng.integers
+    # calls consume the generator stream exactly as one large call does
+    # (verified element-for-element), and all control chunks are drawn
+    # BEFORE all treatment chunks, preserving the original draw order --
+    # so results are bit-identical to the previous implementation.
+    chunk = max(1, min(n_boot, int(2_000_000 // max(n, m)) or 1))
+    qx_parts = []
+    for s in range(0, n_boot, chunk):
+        b = min(chunk, n_boot - s)
+        idx = rng.integers(0, n, size=(b, n))
+        qx_parts.append(np.quantile(control[idx], q, axis=1, method="linear"))
+    qy_parts = []
+    for s in range(0, n_boot, chunk):
+        b = min(chunk, n_boot - s)
+        idx = rng.integers(0, m, size=(b, m))
+        qy_parts.append(np.quantile(treatment[idx], q, axis=1, method="linear"))
+    qx = np.concatenate(qx_parts, axis=1)  # (len(q), n_boot)
+    qy = np.concatenate(qy_parts, axis=1)  # (len(q), n_boot)
     boot_deltas = (qy - qx).T  # (n_boot, len(q))
 
     se = boot_deltas.std(axis=0, ddof=1)
