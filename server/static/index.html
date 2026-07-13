@@ -168,7 +168,13 @@
     <strong>Greptile</strong> (paper canvas, monospace stats, angular buttons),
     <strong>lapa.ninja</strong> (dark “Depth” theme, pill controls),
     and the <strong>2026 editorial trend</strong> (blocky display type, asymmetric layout).
-    It runs entirely offline once loaded; no external requests occur at runtime.
+    Run locally, it makes no external requests; the hosted demo additionally records a
+    cookieless visit count (GoatCounter) that never includes your data.
+  </p>
+  <p>
+    Contact: a metric worth auditing, a question, or a bug:
+    <a href="mailto:christophermackle01@gmail.com">christophermackle01@gmail.com</a> ·
+    <a href="https://github.com/ChrisMac860/depth">github.com/ChrisMac860/depth</a>
   </p>
 </footer>
 
@@ -254,7 +260,7 @@
 
     <section class="help-section">
       <h3>Bringing your own data</h3>
-      <p>Paste or upload data in one of two formats. Each group needs at least 10 values. Data goes to the local backend only; nothing leaves your machine.</p>
+      <p>Paste or upload data in one of two formats. Each group needs at least 10 values. Analysis runs on the backend serving this page: your own machine when you run DEPTH locally, or the demo server when you use the hosted demo. Data is processed in memory and never stored; for sensitive data, run DEPTH locally.</p>
       <dl class="help-dl">
         <dt>Two columns</dt>
         <dd>Two delimiter-separated numeric columns (comma, tab, or semicolon; a header row is tolerated). Column mode pairs values row by row, so rows missing either value are skipped. If your two groups have different sizes, use the two-block format instead.</dd>
@@ -289,5 +295,20 @@
 </aside>
 
 <script src="/static/app.js" defer></script>
+<script>
+  /* Visit counter, hosted demo ONLY: local runs stay free of external
+     requests, exactly as the footer states. GoatCounter is cookieless and
+     records no personal data and none of the analysed values. */
+  (function () {
+    var h = location.hostname;
+    if (h.length > 13 && h.indexOf('.onrender.com') === h.length - 13) {
+      var s = document.createElement('script');
+      s.async = true;
+      s.setAttribute('data-goatcounter', 'https://cmackle.goatcounter.com/count');
+      s.src = 'https://gc.zgo.at/count.js';
+      document.head.appendChild(s);
+    }
+  })();
+</script>
 </body>
 </html>

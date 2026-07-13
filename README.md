@@ -39,7 +39,9 @@ python run.py
 
 Then open the printed URL, **http://127.0.0.1:8000**, in a browser.
 DEPTH binds to localhost only and makes no network calls at runtime; all
-assets and datasets are local.
+assets and datasets are local. (The hosted demo is the one exception: it
+records a cookieless visit count via GoatCounter, which never includes
+analysed data. Local runs load no counter.)
 
 This repository vendors the `shiftab` statistics library under `shiftab/`
 (engine source, contract, and licence attribution); `server/engine.py`
