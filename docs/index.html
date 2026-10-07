@@ -131,14 +131,14 @@
   </div>
 
   <ul>
-    <li>At the 10th percentile, the difference is <span class="num">$0</span>. The people at the bottom of the distribution gained absolutely nothing whatsoever.</li>
-    <li>At the 25th percentile they gained <span class="num">$485</span>.</li>
+    <li>At the 10th percentile, the difference is <span class="num">$0</span>. The bottom of the earnings distribution did not move at all.</li>
+    <li>At the 25th percentile the gap is <span class="num">$485</span>.</li>
     <li>At the median: <span class="num">$1,094</span>.</li>
     <li>At the 75th: <span class="num">$2,355</span>. At the 90th: <span class="num">$3,198</span>. At the 95th: roughly <span class="num">$3,900</span>.</li>
     <li>The share of people earning nothing at all fell from 35% to 24%.</li>
   </ul>
 
-  <p>The average of <span class="num">$1,794</span> is true, but it is misleading and does not give the full picture. The chart above is a <strong>shift function</strong>: at every quantile of the control distribution, it shows how much higher or lower the treatment distribution sits, with a confidence band around the whole curve. It comes from a 1976 paper by Doksum and Sievers ("Plotting with Confidence: Graphical Comparisons of Two Populations") that experimentation tooling simply never picked up. Every A/B dashboard I have seen just reports the difference in means and stops; perhaps, if you are lucky, the 95th percentile.</p>
+  <p>The average of <span class="num">$1,794</span> is true, but it is misleading and does not give the full picture. The chart above is a <strong>shift function</strong>: at every quantile of the control distribution, it shows how much higher or lower the treatment distribution sits, with a confidence band around the whole curve. (It compares distributions, not individuals: it tells you the bottom of the distribution stayed put, not that the same people gained nothing, since people can swap places.) It comes from a 1976 paper by Doksum and Sievers ("Plotting with Confidence: Graphical Comparisons of Two Populations") that experimentation tooling has mostly left on the shelf. Most A/B dashboards report the difference in means and stop; the better ones let you test a single percentile, such as the 95th, one at a time. Very few show the whole curve with one simultaneous band.</p>
 
   <p>The detail that keeps it honest rather than a p-hacking machine is the word <strong>simultaneous</strong>. The band around the curve is valid across the whole curve at once: one confidence statement for every quantile together, not ninety-nine separate tests waiting to hand you a false positive. If you have ever been tempted to peek at "the effect in the top decile" after a flat result, this is the adult version of that instinct.</p>
 
